@@ -15,11 +15,18 @@ class BoardController extends Controller
         return BoardResource::collection(Board::get());
     }
 
-    public function show($id)
+    public function show(Board $board)
     {
-        $board = Board::find($id);
 
-        return $board? new BoardResource($board): response()->json(['error' => 'Board not Found'], 404);
+        return new BoardResource($board);
     }
+
+    public function showGuest()
+    {
+        $board = Board::findOrFail(1);
+        return new BoardResource($board);
+    }
+
+
 
 }
