@@ -47,6 +47,7 @@ class Game extends Model
         return $this->hasMany(MultiplayerGamePlayed::class);
     }
 
+
     public function board()
     {
         return $this->belongsTo(Board::class);
