@@ -29,3 +29,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/games', [GameController::class, 'store']);
 });
 Route::post('/auth/login', [AuthController::class, 'login']);
+

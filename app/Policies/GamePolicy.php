@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use function Symfony\Component\Translation\t;
 
 class GamePolicy
 {
@@ -16,6 +17,7 @@ class GamePolicy
         if ($user->type == 'A') {
             return true;
         }
+
         return null;
     }
 
@@ -30,6 +32,8 @@ class GamePolicy
     /**
      * Determine whether the user can create models.
      */
+
+
     public function create(User $user): bool
     {
         return true;
@@ -41,6 +45,7 @@ class GamePolicy
     public function update(User $user, Game $game): bool
     {
         //
+        return  true;
     }
 
     /**
@@ -49,6 +54,7 @@ class GamePolicy
     public function delete(User $user, Game $game): bool
     {
         //
+        return true;
     }
 
     /**
@@ -57,6 +63,7 @@ class GamePolicy
     public function restore(User $user, Game $game): bool
     {
         //
+        return true;
     }
 
     /**
@@ -65,5 +72,8 @@ class GamePolicy
     public function forceDelete(User $user, Game $game): bool
     {
         //
+        return true;
     }
+
+
 }

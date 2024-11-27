@@ -28,5 +28,6 @@ class StoreUpdateGameRequest extends FormRequest
         'status' => 'required|in:PE,PL,E,I',
         'board_id' => 'required|exists:boards,id',
     ];
+
     }
 }
