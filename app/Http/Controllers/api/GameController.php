@@ -21,8 +21,26 @@ class GameController extends Controller
        return GameResource::collection($user->gamesCreated);
     }
 
+    public function view(Game $game)
+    {
+        return new GameResource($game);
+
+    }
+
+    public function update(StoreUpdateGameRequest $request, Game $game)
+    {
+        $game->fill($request->validated());
+        $game->save();
+
+        return new GameResource($game);
+    }
+
+
     public function store(StoreUpdateGameRequest $request){
-        $game = Game::create($request->validated());
+        $game = new Game();
+        $game->fill($request->all());
+        $game->created_user_id = $request->user() ? $request->user()->id : null;
+        $game->save();
         return new GameResource($game);
     }
 }

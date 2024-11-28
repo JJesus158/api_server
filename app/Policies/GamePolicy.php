@@ -44,8 +44,7 @@ class GamePolicy
      */
     public function update(User $user, Game $game): bool
     {
-        //
-        return  true;
+        return  $game->created_user_id === $user->id;
     }
 
     /**

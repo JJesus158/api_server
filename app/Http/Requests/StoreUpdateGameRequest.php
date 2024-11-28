@@ -21,13 +21,23 @@ class StoreUpdateGameRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
         'type' => 'required|in:S,M',
-        'created_user_id' => 'required',
+        'created_user_id' => 'nullable|exists:users,id',
         'winner_user_id' => 'nullable',
         'status' => 'required|in:PE,PL,E,I',
         'board_id' => 'required|exists:boards,id',
+        'began_at' => 'nullable',
+        'total_time' => 'nullable',
+        'custom'=> 'required',
     ];
 
+    if ($this->input('status') === 'E') {
+        $rules['ended_at'] = 'required|date';
+    } else {
+        $rules['ended_at'] = 'nullable|prohibited';
+    }
+
+        return $rules;
     }
 }

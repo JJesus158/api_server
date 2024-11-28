@@ -17,8 +17,9 @@ class GameResource extends JsonResource
             'status' => $this->status,
             'began_at' => $this->began_at,
             'ended_at' => $this->ended_at,
-            'total_time' => $this->total_time,
-            'board_id' => $this->board_id
+            'total_time' => $this->total_time === null ? 0 : $this->total_time,
+            'board_id' => $this->board_id,
+            'custom' => $this->custom
         ];
     }
 }

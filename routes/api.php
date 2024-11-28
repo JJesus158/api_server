@@ -23,10 +23,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/me', [UserController::class , 'showMe']);
 
     Route::get('/boards/{board}', [BoardController::class, 'show'])->can('view', 'board');
+    Route::get('/games', [GameController::class, 'index']);
+    Route::post('/games', [GameController::class, 'store']);
 
 
     Route::get('/games', [GameController::class, 'index']);
     Route::post('/games', [GameController::class, 'store']);
+    Route::get('/games/{game}', [GameController::class, 'view'])->can('view', 'game');
+    Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
 });
 Route::post('/auth/login', [AuthController::class, 'login']);
 
