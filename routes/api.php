@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
 
     Route::get('/transactions', [TransactionController::class, 'index']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
 });
 Route::post('/auth/login', [AuthController::class, 'login']);
 
