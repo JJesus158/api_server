@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\BoardController;
 use App\Http\Controllers\api\GameController;
+use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
 use App\Models\Game;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/games', [GameController::class, 'store']);
     Route::get('/games/{game}', [GameController::class, 'view'])->can('view', 'game');
     Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
+
+    Route::get('/transactions', [TransactionController::class, 'index']);
 });
 Route::post('/auth/login', [AuthController::class, 'login']);
 
