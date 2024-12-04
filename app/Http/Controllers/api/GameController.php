@@ -14,12 +14,13 @@ class GameController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $itensPerPage = $request->input('itensPerPage', 10);
 
         if ($user->type == 'A') {
-            return GameResource::collection(Game::all());
+            return GameResource::collection(Game::get()::orderBy('created_at', 'desc')->paginate($itensPerPage));
         }
 
-       return GameResource::collection($user->gamesCreated);
+       return GameResource::collection($user->gamesCreated()->orderBy('created_at', 'desc')->paginate($itensPerPage));
     }
 
     public function view(Game $game)
