@@ -17,7 +17,7 @@ class GameController extends Controller
         $itensPerPage = $request->input('itensPerPage', 10);
 
         if ($user->type == 'A') {
-            return GameResource::collection(Game::get()::orderBy('created_at', 'desc')->paginate($itensPerPage));
+            return GameResource::collection(Game::orderBy('created_at', 'desc')->paginate($itensPerPage));
         }
 
        return GameResource::collection($user->gamesCreated()->orderBy('created_at', 'desc')->paginate($itensPerPage));

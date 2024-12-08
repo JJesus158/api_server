@@ -11,8 +11,8 @@ class GameResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'created_user_id' => $this->created_user_id,
-            'winner_user_id' => $this->winner_user_id,
+            'created_user' => $this->createdUser,
+            'winner' => $this->winner,
             'type' => $this->type,
             'status' => $this->status,
             'began_at' => $this->began_at,
@@ -20,6 +20,7 @@ class GameResource extends JsonResource
             'total_time' => $this->total_time === null ? 0 : $this->total_time,
             'board_size' => ($this->board->board_rows * $this->board->board_cols),
             'board_id'=>$this->board_id,
+            'total_turns' => $this->total_turns_winner,
             'custom' => $this->custom
         ];
     }

@@ -33,7 +33,7 @@ class Game extends Model
         return $this->belongsTo(User::class, 'created_user_id');
     }
 
-    public function winnerUser()
+    public function winner()
     {
         return $this->belongsTo(User::class, 'winner_user_id');
     }
