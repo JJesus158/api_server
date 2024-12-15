@@ -4,8 +4,7 @@ namespace App\Policies;
 
 use App\Models\Board;
 use App\Models\User;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Log;
+
 
 class BoardPolicy
 {

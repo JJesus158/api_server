@@ -9,24 +9,13 @@ use function Symfony\Component\Translation\t;
 
 class GamePolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function before(User $user): bool|null
-    {
-        if ($user->type == 'A') {
-            return true;
-        }
-
-        return null;
-    }
 
     /**
      * Determine whether the user can view the model.
      */
     public function view(User $user, Game $game): bool
     {
-        return $user->id === $game->created_user_id;
+        return ($user->id === $game->created_user_id);
     }
 
     /**
@@ -36,7 +25,7 @@ class GamePolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return !$user->type=='A';
     }
 
     /**

@@ -16,8 +16,6 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-
-
     public function showMe(Request $request): UserResource
     {
         return new UserResource($request->user());
@@ -29,22 +27,36 @@ class UserController extends Controller
         $user = new User();
         $user->fill($request->only(['name', 'email', 'nickname']));
 
-        // Hash the password before saving
+        // Hash the password before storing it
         $user->password = bcrypt($request->input('password'));
-
-        // Set the initial brain coins balance
         $user->brain_coins_balance = 10;
+        $user->type = 'P';
 
-        // Save the user to the database
+        // Generate a remember_token
+        $user->remember_token = Str::random(10);
+
+        // Handle photo if provided
+        if ($request->has('photo')) {
+            $imageName = $this->handlePhoto($request->input('photo'));
+            if ($imageName) {
+                $user->photo_filename = $imageName;
+            }
+        }
+
+        // Save the user record to the database
         $user->save();
 
-        // Log the initial transaction
+        // Log the initial transaction (assuming a bonus is being added)
         $user->transactions()->create([
-            'type' => 'B', // Assuming 'B' represents a bonus or initial transaction type
+            'type' => 'B', // 'B' represents a bonus or initial transaction type
             'transaction_datetime' => now(),
             'brain_coins' => 10,
         ]);
+
+        // Fire the Registered event (for mail, notifications, etc.)
         event(new Registered($user));
+
+        // Return the user resource
         return new UserResource($user);
     }
 
@@ -61,25 +73,8 @@ class UserController extends Controller
 
         // Handle the photo if provided (Base64 encoding)
         if ($request->has('photo')) {
-            // Extract the Base64 encoded string (assuming the photo is passed as a string)
-            $base64Image = $request->input('photo');
-
-            // Match the image's MIME type and data (e.g., 'data:image/jpeg;base64,')
-            if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
-                // Remove the "data:image/*;base64," part
-                $imageData = substr($base64Image, strpos($base64Image, ',') + 1);
-
-                // Decode the base64 data
-                $imageData = base64_decode($imageData);
-
-                // Generate a unique file name
-                $imageName = Str::random(40) . '.' . $matches[1];
-
-                // Store the image on disk (public storage)
-                $imagePath = 'photos/' . $imageName;
-                Storage::disk('public')->put($imagePath, $imageData);
-
-
+            $imageName = $this->handlePhoto($request->input('photo'));
+            if ($imageName) {
                 $user->photo_filename = $imageName;
             }
         }
@@ -90,7 +85,6 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-
     public function deleteMe(Request $request)
     {
         $user = $request->user();
@@ -99,4 +93,27 @@ class UserController extends Controller
         $user->delete();
     }
 
+    // Private method to handle photo upload
+    private function handlePhoto($base64Image)
+    {
+        // Match the image's MIME type and data (e.g., 'data:image/jpeg;base64,')
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+            // Remove the "data:image/*;base64," part
+            $imageData = substr($base64Image, strpos($base64Image, ',') + 1);
+
+            // Decode the base64 data
+            $imageData = base64_decode($imageData);
+
+            // Generate a unique file name
+            $imageName = Str::random(40) . '.' . $matches[1];
+
+            // Store the image on disk (public storage)
+            $imagePath = 'photos/' . $imageName;
+            Storage::disk('public')->put($imagePath, $imageData);
+
+            return $imageName;
+        }
+
+        return null;
+    }
 }

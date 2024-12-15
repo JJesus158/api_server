@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Board;
 use App\Policies\BoardPolicy;
 use App\Policies\GamePolicy;
+use App\Policies\TransactionPolicy;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\ServiceProvider;
 
