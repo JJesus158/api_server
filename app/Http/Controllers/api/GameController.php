@@ -58,4 +58,90 @@ class GameController extends Controller
         $game->save();
         return new GameResource($game);
     }
+    public function personalScoreboard(Request $request)
+    {
+        $user = $request->user();
+
+        // Best times and minimum turns for each board size (Single-Player)
+        $singlePlayerStats = $user->gamesCreated()
+            ->where('type', 'S')
+            ->get()
+            ->groupBy(fn($game) => $game->board->board_rows . 'x' . $game->board->board_cols)
+            ->map(function ($games, $boardSize) {
+                $topBestTimes = $games->sortBy('total_time')->take(10)->map(fn($game) => [
+                    'game_id' => $game->id,
+                    'time' => $game->total_time,
+                ]);
+                $topMinTurns = $games->sortBy('total_turns_winner')->take(10)->map(fn($game) => [
+                    'game_id' => $game->id,
+                    'turns' => $game->total_turns_winner,
+                ]);
+                return [
+                    'board_size' => $boardSize,
+                    'best_times' => $topBestTimes->values(),
+                    'min_turns' => $topMinTurns->values(),
+                ];
+            });
+
+        // Victories and losses (Multiplayer)
+        $multiplayerStats = [
+            'total_victories' => $user->gamesCreated()->where('type', 'M')->where('winner', $user->id)->count(),
+            'total_losses' => $user->gamesCreated()->where('type', 'M')->where('winner', '!=', $user->id)->count(),
+        ];
+
+        return response()->json([
+            'single_player' => $singlePlayerStats->values(),
+            'multiplayer' => $multiplayerStats,
+        ]);
+    }
+
+    public function globalScoreboard()
+    {
+        // Best times and minimum turns for each board size (Single-Player)
+        $singlePlayerStats = Game::where('type', 'S')
+            ->get()
+            ->groupBy(fn($game) => $game->board->board_rows . 'x' . $game->board->board_cols)
+            ->map(function ($games, $boardSize) {
+                $topBestTimes = $games->whereNotNull('total_time')->where('status', 'E')->sortBy('total_time')->take(10)->map(fn($game) => [
+                    'nickname' => $game->createdUser->nickname ?? "N/A",
+                    'time' => $game->total_time,
+                ]);
+                $topMinTurns = $games
+                    ->whereNotNull('total_turns_winner')
+                    ->where('status', 'E')
+                    ->sortBy('total_turns_winner')
+                    ->take(10)->map(fn($game) => [
+                    'nickname' => $game->createdUser->nickname ?? "N/A",
+                    'turns' => $game->total_turns_winner,
+                ]);
+                return [
+                    'board_size' => $boardSize,
+                    'best_times' => $topBestTimes->values(),
+                    'min_turns' => $topMinTurns->values(),
+                ];
+            });
+
+        // Top 5 players with the most victories (Multiplayer)
+        $multiplayerStats = Game::where('type', 'M')
+            ->whereNotNull('winner_user_id')
+            ->get()
+            ->groupBy('winner')
+            ->map(fn($games, $playerId) => [
+                'nickname' => $games->first()->createdUser->nickname?? "N/A",
+                'victories' => $games->count(),
+                'first_victory_date' => $games->min('created_at'),
+            ])
+            ->sortByDesc('victories')
+            ->sortBy('first_victory_date') // Tie-breaker
+            ->take(5)
+            ->values();
+
+        return response()->json([
+            'single_player' => $singlePlayerStats->values(),
+            'multiplayer' => $multiplayerStats,
+        ]);
+    }
+
+
+
 }

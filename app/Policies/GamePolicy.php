@@ -25,7 +25,7 @@ class GamePolicy
 
     public function create(User $user): bool
     {
-        return !$user->type=='A';
+        return $user->type !== 'A';
     }
 
     /**

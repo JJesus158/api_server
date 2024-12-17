@@ -21,11 +21,7 @@ class BoardController extends Controller
         return new BoardResource($board);
     }
 
-    public function showGuest()
-    {
-        $board = Board::findOrFail(1);
-        return new BoardResource($board);
-    }
+
 
 
 

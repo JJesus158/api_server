@@ -35,14 +35,20 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
 
     //Games
     Route::get('/games', [GameController::class, 'index']);
-    Route::post('/games', [GameController::class, 'store'])->can('create', 'game');
+    Route::post('/games', [GameController::class, 'store'])->can('create', Game::class);
 
     Route::get('/games/{game}', [GameController::class, 'view'])->can('view', 'game');
     Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->can('view', Transaction::class);
     Route::post('/transactions', [TransactionController::class, 'store'])->can('create', Transaction::class);
+
+    //personal scoreboard
+    Route::get('/scoreboard/personal', [GameController::class, 'personalScoreboard']);
+
 });
+
+
 
 Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 Route::post('/auth/register', [UserController::class, 'storeMe']);
@@ -63,3 +69,6 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
         'message' => 'Your email has been successfully verified.',
     ]);
 })->middleware(['signed'])->name('verification.verify');
+
+//scoreboard multiplayer
+Route::get('/scoreboard/global', [GameController::class, 'globalScoreboard']);
