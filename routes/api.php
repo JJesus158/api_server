@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
 Route::get('/boards', [BoardController::class, 'index']);
-//Route::get('/boards/{board}', [BoardController::class, 'show']);
 
 
 
@@ -56,7 +56,7 @@ Route::post('/auth/register', [UserController::class, 'storeMe']);
 Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
     $user = User::findOrFail($id);
 
-    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+    if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
         return response()->json(['error' => 'Invalid verification link'], 403);
     }
 
@@ -71,4 +71,5 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 })->middleware(['signed'])->name('verification.verify');
 
 //scoreboard multiplayer
-Route::get('/scoreboard/global', [GameController::class, 'globalScoreboard']);
+Route::get('/scoreboard/global', [GameController::class, 'globalPlayerScoreboard']);
+
