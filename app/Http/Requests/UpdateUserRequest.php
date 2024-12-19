@@ -13,7 +13,6 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // If you want to restrict this to only authenticated users, you can return true or add custom logic
         return true;
     }
 

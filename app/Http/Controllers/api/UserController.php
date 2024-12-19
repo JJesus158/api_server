@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateBlockUser;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -15,39 +16,71 @@ use Illuminate\Support\Str;
 class UserController extends Controller
 {
 
-    public function view(User $user)
-    {
-        return new UserResource($user);
 
-    }
-
-
-
-    public function index(Request $request, $user)
+    public function index(Request $request)
     {
 
         $itensPerPage = $request->input('itensPerPage', 10);
 
+        return UserResource::collection(User::orderBy('created_at', 'desc')->paginate($itensPerPage));
+    }
 
-            return UserResource::collection($user->usersCreated()->orderBy('created_at', 'desc')->paginate($itensPerPage));
+
+    public function updateStatus(UpdateBlockUser $request, $id)
+    {
+
+        $validatedData = $request->validated();
+        // Find the user
+        $user = User::findOrFail($id);
+
+        // Update the user's status
+        if ($validatedData['action'] === 'block') {
+            $user->blocked = 1; // Update the status as per your database schema
+        } elseif ($validatedData['action'] === 'unblock') {
+            $user->blocked = 0; // Restore the status to active
         }
 
-
-    public function update(UpdateUserRequest $request, User $user)
-    {
-        $user->fill($request->validated());
         $user->save();
 
         return new UserResource($user);
     }
 
-public function store(StoreUserRequest $request)
-{
+    public function delete(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->id === $request->user()->id) {
+            return response()->json(['message' => 'You cannot delete your own account.'], 403);
+        }
+        $user->delete();
+        return new UserResource($user);
+    }
 
-}
+    public function storeAdminUser(StoreUserRequest $request): UserResource
+    {
+        // Create the user
+        $user = new User();
+        $user->fill($request->only(['name', 'email', 'nickname']));
 
+        // Hash the password before storing it
+        $user->password = bcrypt($request->input('password'));
+        $user->brain_coins_balance = -1;
+        $user->type = 'A';
 
+        // Generate a remember_token
+        $user->remember_token = Str::random(10);
 
+        // Handle photo if provided
+        if ($request->has('photo')) {
+            $imageName = $this->handlePhoto($request->input('photo'));
+            if ($imageName) {
+                $user->photo_filename = $imageName;
+            }
+        }
+
+        $user->save();
+
+        return new UserResource($user);
+    }
 
     public function showMe(Request $request): UserResource
     {

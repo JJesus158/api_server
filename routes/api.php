@@ -25,11 +25,16 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
 
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
-
+    //users
     Route::get('/users/me', [UserController::class , 'showMe']);
-
     Route::patch('/users/me', [UserController::class , 'updateMe']);
-    Route::delete('/users/{user}', [UserController::class , 'deleteMe']);
+    Route::delete('/users/me', [UserController::class , 'deleteMe'])->can('deleteMe', 'user');
+
+    Route::get('/users', [UserController::class, 'index'])->can('viewAny', User::class);
+    Route::patch('users/{id}', [UserController::class, 'updateStatus'])->can('updateStatus', User::class);
+    Route::delete('users/{id}', [UserController::class, 'delete'])->can('delete', User::class);
+    Route::post('/users', [UserController::class, 'storeAdminUser'])->can('store', User::class);
+
 
     Route::get('/boards/{board}', [BoardController::class, 'show'])->can('view', 'board');
 
@@ -39,15 +44,6 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
 
     Route::get('/games/{game}', [GameController::class, 'view'])->can('view', 'game');
     Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
-
-//Users
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store'])->can('create', User::class);
-
-    Route::get('/users/{user}', [UserController::class, 'view'])->can('view', 'user');
-    Route::put('/users/{user}', [UserController::class, 'update'])->can('update', 'user');
-
-
 
     Route::get('/transactions', [TransactionController::class, 'index'])->can('view', Transaction::class);
     Route::post('/transactions', [TransactionController::class, 'store'])->can('create', Transaction::class);
@@ -81,4 +77,3 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 
 //scoreboard multiplayer
 Route::get('/scoreboard/global', [GameController::class, 'globalPlayerScoreboard']);
-
