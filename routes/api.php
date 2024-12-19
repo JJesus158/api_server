@@ -40,6 +40,15 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
     Route::get('/games/{game}', [GameController::class, 'view'])->can('view', 'game');
     Route::put('/games/{game}', [GameController::class, 'update'])->can('update', 'game');
 
+//Users
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store'])->can('create', User::class);
+
+    Route::get('/users/{user}', [UserController::class, 'view'])->can('view', 'user');
+    Route::put('/users/{user}', [UserController::class, 'update'])->can('update', 'user');
+
+
+
     Route::get('/transactions', [TransactionController::class, 'index'])->can('view', Transaction::class);
     Route::post('/transactions', [TransactionController::class, 'store'])->can('create', Transaction::class);
 

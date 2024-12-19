@@ -5,9 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\GameResource;
 use App\Http\Resources\UserResource;
-use App\Models\Game;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -16,6 +14,41 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+
+    public function view(User $user)
+    {
+        return new UserResource($user);
+
+    }
+
+
+
+    public function index(Request $request, $user)
+    {
+
+        $itensPerPage = $request->input('itensPerPage', 10);
+
+
+            return UserResource::collection($user->usersCreated()->orderBy('created_at', 'desc')->paginate($itensPerPage));
+        }
+
+
+    public function update(UpdateUserRequest $request, User $user)
+    {
+        $user->fill($request->validated());
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+public function store(StoreUserRequest $request)
+{
+
+}
+
+
+
+
     public function showMe(Request $request): UserResource
     {
         return new UserResource($request->user());
@@ -116,4 +149,8 @@ class UserController extends Controller
 
         return null;
     }
+
+
+
+
 }
