@@ -20,7 +20,7 @@ class GameResource extends JsonResource
             'total_time' => $this->total_time === null ? 0 : $this->total_time,
             'board_size' => ($this->board->board_rows * $this->board->board_cols),
             'board_id'=>$this->board_id,
-            'total_turns' => $this->total_turns_winner,
+            'total_turns_winner' => $this->total_turns_winner ?? 0,
             'custom' => $this->custom
         ];
     }

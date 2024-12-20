@@ -29,6 +29,7 @@ class StoreUpdateGameRequest extends FormRequest
         'board_id' => 'required|exists:boards,id',
         'began_at' => 'nullable',
         'total_time' => 'nullable',
+        'total_turns_winner' => 'nullable',
         'custom'=> 'required',
     ];
 
