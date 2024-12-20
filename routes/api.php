@@ -28,7 +28,7 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
     //users
     Route::get('/users/me', [UserController::class , 'showMe']);
     Route::patch('/users/me', [UserController::class , 'updateMe']);
-    Route::delete('/users/me', [UserController::class , 'deleteMe'])->can('deleteMe', 'user');
+    Route::delete('/users/me/{id}', [UserController::class , 'deleteMe'])->can('deleteMe', User::class);
 
     Route::get('/users', [UserController::class, 'index'])->can('viewAny', User::class);
     Route::patch('users/{id}', [UserController::class, 'updateStatus'])->can('updateStatus', User::class);
@@ -54,10 +54,16 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
 });
 
 
-
 Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 Route::post('/auth/register', [UserController::class, 'storeMe']);
 
+
+//scoreboard multiplayer
+Route::get('/scoreboard/global', [GameController::class, 'globalPlayerScoreboard']);
+
+
+
+//Email verification
 Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
     $user = User::findOrFail($id);
 
@@ -75,5 +81,4 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
     ]);
 })->middleware(['signed'])->name('verification.verify');
 
-//scoreboard multiplayer
-Route::get('/scoreboard/global', [GameController::class, 'globalPlayerScoreboard']);
+

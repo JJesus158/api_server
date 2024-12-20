@@ -13,9 +13,9 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function viewMe(User $user, Game $game): bool
+    public function viewMe(User $user): bool
     {
-        return ($user->id === $game->created_user_id);
+        return true;
     }
 
     /**
@@ -31,10 +31,7 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function updateMe(User $user, Game $game): bool
-    {
-        return  $game->created_user_id === $user->id;
-    }
+
 
     /**
      * Determine whether the user can delete the model.

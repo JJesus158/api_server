@@ -21,11 +21,9 @@ class GamePolicy
     /**
      * Determine whether the user can create models.
      */
-
-
     public function create(User $user): bool
     {
-        return $user->type !== 'A';
+        return $user->type === 'P';
     }
 
     /**
@@ -34,33 +32,6 @@ class GamePolicy
     public function update(User $user, Game $game): bool
     {
         return  $game->created_user_id === $user->id;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Game $game): bool
-    {
-        //
-        return true;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Game $game): bool
-    {
-        //
-        return true;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Game $game): bool
-    {
-        //
-        return true;
     }
 
 
