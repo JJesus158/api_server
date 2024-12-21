@@ -5,6 +5,7 @@ use App\Http\Controllers\api\BoardController;
 use App\Http\Controllers\api\GameController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\StatisticsController;
 use App\Models\Game;
 use App\Models\Transaction;
 use App\Models\User;
@@ -51,6 +52,8 @@ Route::middleware(['auth:sanctum','verified'])->group(function () {
     //personal scoreboard
     Route::get('/scoreboard/personal', [GameController::class, 'personalScoreboard']);
 
+    //Statistics admin
+    Route::get('/statistics/admin', [StatisticsController::class, 'getAdminStatistics']);
 });
 
 
@@ -62,6 +65,9 @@ Route::post('/auth/register', [UserController::class, 'storeMe']);
 Route::get('/scoreboard/global', [GameController::class, 'globalPlayerScoreboard']);
 
 
+//Statistics
+Route::get('/statistics/general', [StatisticsController::class, 'getGeneralStatistics']);
+Route::get('/statistics/games-by-time/{timeframe?}', [StatisticsController::class, 'getGamesByTime']);
 
 //Email verification
 Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
